@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Savings Goals | Personal Finance Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        nav {
+            background: #172554;
+            padding: 16px 5%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 28px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 12px 0 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 15px;
+            border: 0;
+            border-radius: 7px;
+            padding: 11px 16px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .delete-button {
+            background: #dc2626;
+        }
+
+        .delete-button:hover {
+            background: #b91c1c;
+        }
+
+        .muted {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        .pending {
+            color: #b45309;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 14px;
+            border-radius: 20px;
+            background: #e2e8f0;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #16a34a;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        .monthly-track .progress-fill {
+            background: #2563eb;
+        }
+
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #e0f2fe;
+        }
+
+        .flash.error,
+        .flash.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .flash.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .flash.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .saving-form {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 9px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-complete {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .badge-pending {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                gap: 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .amount {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('expenses') }}">Expenses</a>
+        <a href="{{ url_for('budget') }}">Budget</a>
+        <a href="{{ url_for('goals') }}">Savings Goals</a>
+        <a href="{{ url_for('ai_assistant') }}">AI Assistant</a>
+        <a href="{{ url_for('chat') }}">Chatbot</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <main class="container">
+
+        <h1>🎯 Savings Goals</h1>
+
+        <p class="muted">
+            Track your monthly savings, total amount saved,
+            remaining target and overall progress.
+        </p>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- AVAILABLE BALANCE -->
+        <div class="card">
+            <h2>Available Balance</h2>
+
+            <div class="amount">
+                ₹{{ "%.2f"|format(
+                available_balance|default(0, true)|float
+                ) }}
+            </div>
+
+            <p class="muted">
+                Total recorded income minus total recorded expenses.
+                Savings deposits are tracked separately as goal savings.
+            </p>
+        </div>
+
+        <!-- CREATE NEW GOAL -->
+        <div class="card">
+            <h2>➕ Create a New Goal</h2>
+
+            <p class="muted">
+                Example: Save ₹60,000 for a laptop in 6 months.
+            </p>
+
+            <form method="POST" action="{{ url_for('goals') }}">
+                <input type="hidden" name="action" value="create_goal">
+
+                <div class="grid">
+                    <div>
+                        <label for="goal_name">Goal Name</label>
+                        <input id="goal_name" name="goal_name" placeholder="e.g. Laptop" maxlength="100" required>
+                    </div>
+
+                    <div>
+                        <label for="target_amount">Target Amount (₹)</label>
+                        <input id="target_amount" name="target_amount" type="number" min="0.01" step="0.01"
+                            placeholder="60000" required>
+                    </div>
+
+                    <div>
+                        <label for="target_months">Duration (Months)</label>
+                        <input id="target_months" name="target_months" type="number" min="1" max="120" value="6"
+                            required>
+                    </div>
+                </div>
+
+                <button type="submit">Create Goal</button>
+            </form>
+        </div>
+
+        <!-- GOALS LIST -->
+        <h2>Your Savings Goals</h2>
+
+        {% set goal_list = goals|default([], true) %}
+
+        {% if goal_list %}
+
+        {% for goal in goal_list %}
+
+        {% set target = goal.get('target_amount', 0)|float %}
+        {% set saved = goal.get('saved_amount', 0)|float %}
+
+        {% set remaining = goal.get(
+        'remaining_amount',
+        [target - saved, 0]|max
+        )|float %}
+
+        {% set monthly_target = goal.get(
+        'base_monthly_target',
+        goal.get('monthly_required', 0)
+        )|float %}
+
+        {% set progress = goal.get(
+        'display_progress',
+        goal.get('progress', 0)
+        )|float %}
+
+        {% set progress = [[progress, 0]|max, 100]|min %}
+
+        {% set goal_id = goal.get('id', 0) %}
+
+        <section class="card">
+
+            <h2>
+                🎯 {{ goal.get(
+                'goal_name',
+                goal.get('name', 'Savings Goal')
+                ) }}
+            </h2>
+
+            <!-- GOAL SUMMARY -->
+            <div class="grid">
+
+                <div class="stat">
+                    <p class="muted">Target Amount</p>
+                    <div class="amount">
+                        ₹{{ "%.2f"|format(target) }}
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <p class="muted">Total Saved</p>
+                    <div class="amount success">
+                        ₹{{ "%.2f"|format(saved) }}
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <p class="muted">Amount Remaining</p>
+                    <div class="amount">
+                        ₹{{ "%.2f"|format(remaining) }}
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <p class="muted">Planned Monthly Target</p>
+                    <div class="amount">
+                        ₹{{ "%.2f"|format(monthly_target) }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- OVERALL PROGRESS -->
+            <h3 style="margin-top: 24px;">
+                Overall Goal Progress
+            </h3>
+
+            <p>
+                <strong>
+                    {{ "%.1f"|format(progress) }}% completed
+                </strong>
+            </p>
+
+            <div class="progress-track" role="progressbar" aria-label="Overall savings goal progress" aria-valuemin="0"
+                aria-valuemax="100" aria-valuenow="{{ progress }}">
+                <div class="progress-fill" style="width: {{ progress }}%;"></div>
+            </div>
+
+            {% if remaining <= 0 %} <p class="success">
+                <strong>🎉 Goal completed! You reached your target.</strong>
+                </p>
+                {% else %}
+                <p class="pending">
+                    ₹{{ "%.2f"|format(remaining) }}
+                    remaining to reach your goal.
+                </p>
+                {% endif %}
+
+                <!-- ADD MONTHLY SAVINGS -->
+                <div class="saving-form">
+
+                    <h3>💰 Add This Month's Savings</h3>
+
+                    <p class="muted">
+                        You can add savings more than once in the same
+                        month. Each deposit will be added to your monthly
+                        and overall totals.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('goals') }}">
+                        <input type="hidden" name="action" value="add_saving">
+
+                        <input type="hidden" name="goal_id" value="{{ goal_id }}">
+
+                        <label for="amount_{{ goal_id }}">
+                            Savings Deposit (₹)
+                        </label>
+
+                        <input id="amount_{{ goal_id }}" type="number" name="amount" min="0.01" max="{{ remaining }}"
+                            step="0.01" placeholder="Enter amount to save" required {% if remaining <=0 %}disabled{%
+                            endif %}>
+
+                        <button type="submit" {% if remaining <=0 %}disabled{% endif %}>
+                            Add Savings
+                        </button>
+                    </form>
+
+                    <p class="muted">
+                        Maximum you can add now:
+                        ₹{{ "%.2f"|format(remaining) }}
+                    </p>
+
+                </div>
+
+                <!-- DELETE GOAL -->
+                <form method="POST" action="{{ url_for('goals') }}" onsubmit="return confirm(
+                            'Delete this goal and its monthly savings history?'
+                        );">
+                    <input type="hidden" name="action" value="delete_goal">
+
+                    <input type="hidden" name="goal_id" value="{{ goal_id }}">
+
+                    <button class="delete-button" type="submit">
+                        Delete Goal
+                    </button>
+                </form>
+
+        </section>
+
+        {% endfor %}
+
+        {% else %}
+
+        <div class="card">
+            <p>You haven't created any savings goals yet.</p>
+            <p class="muted">
+                Create your first goal using the form above.
+            </p>
+        </div>
+
+        {% endif %}
+
+        <!-- MONTHLY SAVINGS HISTORY -->
+        <div class="card">
+
+            <h2>📅 Monthly Savings History</h2>
+
+            <p class="muted">
+                Each row represents the total savings for one goal
+                in one calendar month. Multiple deposits in the same
+                month are combined into one total.
+            </p>
+
+            <div class="table-wrap">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Goal</th>
+                            <th>Month</th>
+                            <th>Monthly Target</th>
+                            <th>Total Saved This Month</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in monthly_history|default([], true) %}
+
+                        <tr>
+                            <td>
+                                {{ item.get('goal_name', 'Savings Goal') }}
+                            </td>
+
+                            <td>
+                                {{ item.get(
+                                'month',
+                                item.get('month_key', '-')
+                                ) }}
+                            </td>
+
+                            <td>
+                                ₹{{ "%.2f"|format(
+                                item.get('monthly_target', 0)|float
+                                ) }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ₹{{ "%.2f"|format(
+                                    item.get('saved', 0)|float
+                                    ) }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {% if item.get('completed', false) %}
+                                <span class="badge badge-complete">
+                                    ✓ Monthly Target Reached
+                                </span>
+                                {% else %}
+                                <span class="badge badge-pending">
+                                    In Progress
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5">
+                                No monthly savings recorded yet.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

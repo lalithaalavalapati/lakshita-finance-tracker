@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses | Personal Finance Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .btn,
+        button {
+            display: inline-block;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 7px;
+            background: #16834a;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .secondary {
+            background: #334155;
+        }
+
+        .delete-btn {
+            background: #b91c1c;
+        }
+
+        .form-grid,
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            margin-bottom: 14px;
+        }
+
+        .summary-card {
+            padding: 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .income {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .expense {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .flash {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 7px;
+            background: #e0e7ff;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+
+        <h1>💸 Personal Finance Tracker</h1>
+        <p>Hello {{ username|default('User') }}! Manage your transactions.</p>
+
+        <nav class="navigation">
+            <a class="btn secondary" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="btn secondary" href="{{ url_for('budget') }}">Budget</a>
+            <a class="btn secondary" href="{{ url_for('goals') }}">Savings Goals</a>
+            <a class="btn secondary" href="{{ url_for('assistant') }}">AI Assistant</a>
+            <a class="btn secondary" href="{{ url_for('chat') }}">Finance Chat</a>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+
+        <!-- ADD TRANSACTION -->
+        <div class="card">
+            <h2>➕ Add Transaction</h2>
+
+            <form method="POST" action="{{ url_for('expenses') }}">
+                <div class="form-grid">
+
+                    <div>
+                        <label for="kind">Transaction Type</label>
+                        <select id="kind" name="kind" required>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="description">Description</label>
+                        <input id="description" name="description" placeholder="Example: Groceries" required>
+                    </div>
+
+                    <div>
+                        <label for="amount">Amount (₹)</label>
+                        <input id="amount" name="amount" type="number" min="0.01" step="0.01" required>
+                    </div>
+
+                    <div>
+                        <label for="category">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Education">Education</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Rent">Rent</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="transaction_date">Date</label>
+                        <input id="transaction_date" name="transaction_date" type="date" value="{{ today|default('') }}"
+                            required>
+                    </div>
+
+                </div>
+
+                <button type="submit">Add Transaction</button>
+            </form>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="card">
+            <h2>📊 Expense Summary</h2>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <p>Total Income</p>
+                    <h2 class="income">
+                        ₹{{ "%.2f"|format(total_income|default(0)|float) }}
+                    </h2>
+                </div>
+
+                <div class="summary-card">
+                    <p>Total Expenses</p>
+                    <h2 class="expense">
+                        ₹{{ "%.2f"|format(total_expenses|default(0)|float) }}
+                    </h2>
+                </div>
+
+                <div class="summary-card">
+                    <p>Balance</p>
+                    <h2>
+                        ₹{{ "%.2f"|format((total_income|default(0)|float) - (total_expenses|default(0)|float)) }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSACTION TABLE -->
+        <div class="card">
+            <h2>📋 Your Transactions</h2>
+
+            {% set rows = transactions|default(expenses|default([])) %}
+
+            {% if rows %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for item in rows %}
+                        <tr>
+                            <td>{{ item['description'] or '' }}</td>
+
+                            <td>₹{{ "%.2f"|format(item['amount']|float) }}</td>
+
+                            <td>{{ item['category'] }}</td>
+
+                            <td>{{ item['transaction_date'] }}</td>
+
+                            <td>
+                                {% if item['kind']|lower == 'income' %}
+                                <span class="income">Income</span>
+                                {% else %}
+                                <span class="expense">Expense</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a class="btn secondary"
+                                    href="{{ url_for('edit_expense', transaction_id=item['id']) }}">
+                                    Edit
+                                </a>
+
+                                <form method="POST" action="{{ url_for('delete_expense', transaction_id=item['id']) }}"
+                                    style="display:inline" onsubmit="return confirm('Delete this transaction?');">
+                                    <button class="delete-btn" type="submit">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No transactions added yet. Add your first transaction above.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</body>
+
+</html>

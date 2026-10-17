@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .page {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin: 18px 0;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+        }
+
+        button,
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #16834a;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #334155;
+        }
+
+        .reply {
+            margin-top: 20px;
+            padding: 16px;
+            background: #edf8f0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
+        .question {
+            margin-top: 20px;
+            padding: 14px;
+            background: #f3f6f8;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <h1>💬 Finance Chatbot</h1>
+        <p>Hello {{ username }}! Ask questions about your spending and savings.</p>
+
+        <p>
+            <a class="btn btn-secondary" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="btn btn-secondary" href="{{ url_for('expenses') }}">Expenses</a>
+            <a class="btn btn-secondary" href="{{ url_for('goals') }}">Savings Goals</a>
+            <a class="btn btn-secondary" href="{{ url_for('assistant') }}">AI Assistant</a>
+        </p>
+
+        <div class="card">
+            <h2>Ask your finance question</h2>
+
+            <p>Try these questions:</p>
+            <ul>
+                <li>How much did I spend?</li>
+                <li>How much did I spend on food?</li>
+                <li>What is my remaining budget?</li>
+                <li>How can I reduce optional expenses?</li>
+                <li>How do I create a savings goal?</li>
+            </ul>
+
+            <form method="POST" action="{{ url_for('chat') }}">
+                <label for="message">Your question</label>
+                <textarea id="message" name="message" rows="3" placeholder="Type your question here..."
+                    required>{{ user_message }}</textarea>
+                <button type="submit">Send Question</button>
+            </form>
+
+            {% if user_message %}
+            <div class="question">
+                <strong>You asked:</strong>
+                <p>{{ user_message }}</p>
+            </div>
+            {% endif %}
+
+            {% if reply %}
+            <div class="reply">
+                <strong>🤖 Finance Assistant:</strong>
+                <p>{{ reply }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

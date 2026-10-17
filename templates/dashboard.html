@@ -1,0 +1,185 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker - Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-layout">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <h2 class="logo">💳 Finance Tracker</h2>
+
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">
+                    <span>🏠</span> Home
+                </a>
+
+                <a href="{{ url_for('dashboard') }}" class="nav-link active">
+                    <span>📊</span> Dashboard
+                </a>
+
+                <a href="{{ url_for('expenses') }}" class="nav-link">
+                    <span>💸</span> Expenses
+                </a>
+
+                <a href="{{ url_for('budget') }}" class="nav-link">
+                    <span>💰</span> Monthly Budget
+                </a>
+
+                <a href="{{ url_for('budget') }}" class="nav-link">
+                    <span>🎯</span> Savings Goals
+                </a>
+
+                <a href="{{ url_for('ai_assistant') }}" class="nav-link">
+                    <span>🤖</span> AI Finance Agent
+                </a>
+
+                <a href="{{ url_for('logout') }}" class="nav-link logout">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- RIGHT MAIN CONTENT -->
+        <main class="main-content">
+
+            <header class="page-header">
+                <div>
+                    <h1>📊 Dashboard</h1>
+                    <p>Welcome to your Personal Finance Tracker!</p>
+                </div>
+            </header>
+
+            <!-- SUMMARY CARDS -->
+            <section class="summary-grid">
+
+                <div class="summary-card">
+                    <span class="card-icon">💸</span>
+                    <h3>Total Expenses</h3>
+                    <p>Track your spending</p>
+                    <a href="{{ url_for('expenses') }}">View Expenses →</a>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-icon">💰</span>
+                    <h3>Monthly Budget</h3>
+                    <p>Manage your budget</p>
+                    <a href="{{ url_for('budget') }}">View Budget →</a>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-icon">🤖</span>
+                    <h3>AI Finance Agent</h3>
+                    <p>Get spending suggestions</p>
+                    <a href="{{ url_for('ai_assistant') }}">Ask AI →</a>
+                </div>
+
+            </section>
+
+            <!-- CHARTS -->
+            <section class="charts-grid">
+
+                <div class="chart-card">
+                    <h2>🥧 Expenses by Category</h2>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h2>📈 Monthly Expenses</h2>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const categoryLabels =
+            {{ category_labels | default ([], true) | tojson }};
+
+        const categoryAmounts =
+            {{ category_amounts | default ([], true) | tojson }};
+
+        const monthLabels =
+            {{ month_labels | default ([], true) | tojson }};
+
+        const monthlyAmounts =
+            {{ monthly_amounts | default ([], true) | tojson }};
+
+        // PIE CHART
+        new Chart(document.getElementById("categoryChart"), {
+            type: "pie",
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: "Expenses by Category",
+                    data: categoryAmounts,
+                    backgroundColor: [
+                        "#6366f1",
+                        "#22c55e",
+                        "#f59e0b",
+                        "#ef4444",
+                        "#06b6d4",
+                        "#a855f7",
+                        "#ec4899"
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        });
+
+        // MONTHLY BAR CHART
+        new Chart(document.getElementById("monthlyChart"), {
+            type: "bar",
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: "Expenses (₹)",
+                    data: monthlyAmounts,
+                    backgroundColor: "#6366f1",
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return "₹" + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
