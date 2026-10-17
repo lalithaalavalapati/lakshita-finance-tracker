@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant | Personal Finance Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .assistant-container {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .assistant-card {
+            background: white;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .assistant-card h2 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .assistant-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .assistant-nav a {
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+        }
+
+        .suggestion {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 5px;
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .empty-message {
+            color: #666;
+            padding: 12px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="assistant-container">
+
+        <h1>🤖 AI Finance Assistant</h1>
+        <p>Understand your spending and discover ways to save money.</p>
+
+        <nav class="assistant-nav">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('expenses') }}">Expenses</a>
+            <a href="{{ url_for('budget') }}">Budget</a>
+            <a href="{{ url_for('goals') }}">Savings Goals</a>
+            <a href="{{ url_for('chat') }}">Chatbot</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+
+        <section class="assistant-card">
+            <h2>💡 Personalized Suggestions</h2>
+
+            {% if suggestions %}
+            {% for suggestion in suggestions %}
+            <div class="suggestion">
+                {{ suggestion }}
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="empty-message">
+                Add expenses to receive spending suggestions.
+            </p>
+            {% endif %}
+        </section>
+
+        <section class="assistant-card">
+            <h2>📊 Spending by Category</h2>
+
+            {% if category_totals %}
+            {% for item in category_totals %}
+            <div class="category-row">
+                <span>{{ item.category }}</span>
+                <strong>₹{{ "%.2f"|format(item.total) }}</strong>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="empty-message">
+                No expense data available yet. Add an expense first.
+            </p>
+            {% endif %}
+        </section>
+
+        <section class="assistant-card">
+            <h2>💬 Ask the Finance Chatbot</h2>
+            <p>
+                Ask questions about budgeting, expenses, and saving money.
+            </p>
+            <a href="{{ url_for('chat') }}">Open Chatbot →</a>
+        </section>
+
+    </div>
+</body>
+
+</html>

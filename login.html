@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Personal Finance Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #101827, #174b45);
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #172b2a;
+            margin-bottom: 8px;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            color: #344054;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #16866f;
+            box-shadow: 0 0 0 3px rgba(22, 134, 111, 0.12);
+        }
+
+        .login-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #16866f;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #116b59;
+        }
+
+        .message {
+            padding: 11px;
+            border-radius: 7px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .danger {
+            background: #fee4e2;
+            color: #b42318;
+        }
+
+        .success {
+            background: #dcfae6;
+            color: #067647;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 22px;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #16866f;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+
+        <div class="logo">💰</div>
+
+        <h1>Welcome Back!</h1>
+        <p class="subtitle">Login to your Personal Finance Tracker</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="message {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username"
+                required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password"
+                autocomplete="current-password" required>
+
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+
+        </form>
+
+        <p class="register-link">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create Account</a>
+        </p>
+
+    </div>
+</body>
+
+</html>

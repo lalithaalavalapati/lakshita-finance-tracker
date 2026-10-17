@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakshita | Personal Finance Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="landing-page">
+
+    <nav class="landing-nav">
+        <!-- FIXED: index endpoint changed to home -->
+        <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-icon">L</span>
+            <span>
+                <strong>Lakshita</strong>
+                <small>PERSONAL FINANCE</small>
+            </span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#privacy">Privacy</a>
+        </div>
+
+        <div class="nav-actions">
+            <a href="{{ url_for('login') }}" class="login-link">
+                Log in
+            </a>
+            <a href="{{ url_for('register') }}" class="btn-silver">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="eyebrow">
+                    A CLEARER WAY TO MANAGE MONEY
+                </span>
+
+                <h1>
+                    Your money.<br>
+                    Your goals.<br>
+                    <span>Your future.</span>
+                </h1>
+
+                <p>
+                    Track expenses, plan your budget, build savings,
+                    and make confident financial decisions — all in
+                    one place.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="{{ url_for('register') }}" class="btn-silver large-btn">
+                        Create Your Account →
+                    </a>
+
+                    <a href="#features" class="btn-outline large-btn">
+                        Explore Features
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span class="status-dot"></span>
+                    A smarter way to understand your money
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="silver-orb"></div>
+
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <span>Monthly overview</span>
+                        <span class="preview-icon">↗</span>
+                    </div>
+
+                    <p class="preview-label">Track your spending</p>
+                    <h2>Every rupee, understood.</h2>
+
+                    <div class="preview-divider"></div>
+
+                    <div class="preview-row">
+                        <span>Expense tracking</span>
+                        <span>Organized</span>
+                    </div>
+
+                    <div class="preview-row">
+                        <span>Monthly budget</span>
+                        <span>Planned</span>
+                    </div>
+
+                    <div class="preview-row">
+                        <span>Savings goals</span>
+                        <span>In progress</span>
+                    </div>
+
+                    <div class="preview-progress">
+                        <span></span>
+                    </div>
+
+                    <small>Your financial journey starts here.</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section" id="features">
+            <div class="section-heading">
+                <span class="eyebrow">EVERYTHING IN ONE PLACE</span>
+                <h2>Money management, made simpler.</h2>
+                <p>
+                    The tools you need to understand spending and
+                    plan for what matters.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">↗</div>
+                    <h3>Expense Tracking</h3>
+                    <p>
+                        Record daily expenses and understand where
+                        your money goes.
+                    </p>
+                    <a href="{{ url_for('login') }}">Explore expenses →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">◷</div>
+                    <h3>Monthly Budget</h3>
+                    <p>
+                        Set a monthly spending limit and get alerts
+                        before you overspend.
+                    </p>
+                    <a href="{{ url_for('login') }}">Plan your budget →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">◇</div>
+                    <h3>Savings Goals</h3>
+                    <p>
+                        Plan for a laptop, a bike, an emergency fund,
+                        or your next big dream.
+                    </p>
+                    <a href="{{ url_for('login') }}">Build your goals →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">✧</div>
+                    <h3>AI Money Assistant</h3>
+                    <p>
+                        Get practical suggestions to manage
+                        optional expenses and save more.
+                    </p>
+                    <a href="{{ url_for('login') }}">Find smart choices →</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="steps-section" id="how-it-works">
+            <div class="section-heading">
+                <span class="eyebrow">A SIMPLE START</span>
+                <h2>Build better money habits.</h2>
+            </div>
+
+            <div class="steps-grid">
+                <article class="step-card">
+                    <span class="step-number">01</span>
+                    <h3>Track what you spend</h3>
+                    <p>
+                        Add your expenses and categorize your
+                        everyday purchases.
+                    </p>
+                </article>
+
+                <article class="step-card">
+                    <span class="step-number">02</span>
+                    <h3>Understand your money</h3>
+                    <p>
+                        Review your dashboard, monthly budget,
+                        and spending patterns.
+                    </p>
+                </article>
+
+                <article class="step-card">
+                    <span class="step-number">03</span>
+                    <h3>Plan what comes next</h3>
+                    <p>
+                        Set savings goals and use smart suggestions
+                        to improve your habits.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="privacy-section" id="privacy">
+            <span class="privacy-symbol">◈</span>
+            <h2>Your financial life deserves care.</h2>
+            <p>
+                Lakshita brings your financial records together
+                in one organized workspace. Keep your account
+                credentials private and use your own account securely.
+            </p>
+            <a href="{{ url_for('register') }}" class="btn-silver large-btn">
+                Start Your Journey →
+            </a>
+        </section>
+    </main>
+
+    <footer class="landing-footer">
+        <a href="{{ url_for('home') }}" class="footer-brand">
+            Lakshita
+        </a>
+        <p>Small steps today. A stronger financial future tomorrow.</p>
+        <span>© 2026 Lakshita Personal Finance Tracker</span>
+    </footer>
+
+</body>
+
+</html>

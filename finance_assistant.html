@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Finance Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>AI Finance Assistant</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/expenses">Expenses</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Your Spending Analysis</h2>
+
+            {% if category_totals %}
+            <ul>
+                {% for category, amount in category_totals %}
+                <li>
+                    {{ category }}:
+                    ₹{{ "%.2f"|format(amount) }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No expenses available to analyze yet.</p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>Saving Suggestions</h2>
+
+            {% for suggestion in suggestions %}
+            <p>💡 {{ suggestion }}</p>
+            {% endfor %}
+        </section>
+
+        <p>
+            <a href="/expenses">Add More Expenses</a>
+        </p>
+    </main>
+
+</body>
+
+</html>
